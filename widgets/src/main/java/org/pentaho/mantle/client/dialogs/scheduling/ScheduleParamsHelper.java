@@ -21,6 +21,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
+import org.pentaho.mantle.client.workspace.JsJob;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,13 +88,26 @@ public class ScheduleParamsHelper {
     return params;
   }
 
-  public static JSONObject generateLineageId( String lineageId ) {
-    JsArrayString lineageIdValue = (JsArrayString) JavaScriptObject.createArray().cast();
-    lineageIdValue.push( lineageId );
-    JsSchedulingParameter p = (JsSchedulingParameter) JavaScriptObject.createObject().cast();
+  public static JSONObject generateLineageId( JsJob job ) {
+    JsArrayString lineageIdValue = JavaScriptObject.createArray().cast();
+    lineageIdValue.push( job.getJobParamValue( "lineage-id" ) );
+
+    JsSchedulingParameter p = JavaScriptObject.createObject().cast();
     p.setName( "lineage-id" );
     p.setType( "string" );
     p.setStringValue( lineageIdValue );
+
+    return new JSONObject( p );
+  }
+
+  public static JSONObject generateActionUser( JsJob job ) {
+    JsArrayString actionUserValue = JavaScriptObject.createArray().cast();
+    actionUserValue.push( job.getJobParamValue( "ActionAdapterQuartzJob-ActionUser" ) );
+
+    JsSchedulingParameter p = JavaScriptObject.createObject().cast();
+    p.setName( "ActionAdapterQuartzJob-ActionUser" );
+    p.setType( "string" );
+    p.setStringValue( actionUserValue );
 
     return new JSONObject( p );
   }

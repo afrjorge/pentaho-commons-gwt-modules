@@ -153,7 +153,13 @@ public class ScheduleParamsDialog extends AbstractWizardDialog {
   @Override
   protected boolean onFinish() {
     scheduleParams = getScheduleParams( false );
-    setLineageIdParam();
+
+    if ( editJob != null ) {
+      scheduleParams.set( scheduleParams.size(), ScheduleParamsHelper.generateActionUser( editJob ) );
+
+      scheduleParams.set( scheduleParams.size(), ScheduleParamsHelper.generateLineageId( editJob ) );
+    }
+
     if ( isEmailConfValid ) {
       showScheduleEmailDialog( scheduleParams );
     } else {
@@ -214,13 +220,6 @@ public class ScheduleParamsDialog extends AbstractWizardDialog {
       setDone( true );
     }
     return false;
-  }
-
-  private void setLineageIdParam() {
-    if ( editJob != null ) {
-      String lineageId = editJob.getJobParamValue( "lineage-id" );
-      scheduleParams.set( scheduleParams.size(), ScheduleParamsHelper.generateLineageId( lineageId ) );
-    }
   }
 
   private void showScheduleEmailDialog( final JSONArray scheduleParams ) {

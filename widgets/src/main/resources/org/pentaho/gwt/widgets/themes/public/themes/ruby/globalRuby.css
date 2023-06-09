@@ -720,7 +720,7 @@ table#weekly-recur tbody tr td:not(:first-child) span.day-of-week-checkbox input
   margin-left: 15px;
 }
 
-div.schedule-name {
+div.schedule-name, div.schedule-user-name {
   margin: 0 4px 5px 0;
 }
 
@@ -1704,7 +1704,7 @@ For IE 9 and IE10, need to add padding to the bottom of some dialogs generated w
   color: #666666;
 }
 
-#schedule-name-input {
+#schedule-name-input, #schedule-user-name-input {
   width: unset;
   margin-bottom: unset;
   flex: 4 1 0;

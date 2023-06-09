@@ -109,14 +109,9 @@ public class ScheduleEmailDialog extends AbstractWizardDialog {
     }
 
     if ( editJob != null ) {
-      String lineageId = editJob.getJobParamValue( "lineage-id" );
-      JsArrayString lineageIdValue = (JsArrayString) JavaScriptObject.createArray().cast();
-      lineageIdValue.push( lineageId );
-      JsSchedulingParameter p = (JsSchedulingParameter) JavaScriptObject.createObject().cast();
-      p.setName( "lineage-id" );
-      p.setType( "string" );
-      p.setStringValue( lineageIdValue );
-      scheduleParams.set( scheduleParams.size(), new JSONObject( p ) );
+      scheduleParams.set( scheduleParams.size(), ScheduleParamsHelper.generateActionUser( editJob ) );
+
+      scheduleParams.set( scheduleParams.size(), ScheduleParamsHelper.generateLineageId( editJob ) );
     }
 
     scheduleRequest.put( "jobParameters", scheduleParams ); //$NON-NLS-1$    

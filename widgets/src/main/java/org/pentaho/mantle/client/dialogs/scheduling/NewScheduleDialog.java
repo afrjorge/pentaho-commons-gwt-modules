@@ -71,6 +71,7 @@ public class NewScheduleDialog extends PromptDialogBox {
 
   private ScheduleRecurrenceDialog recurrenceDialog = null;
 
+  private TextBox scheduleUserNameTextBox = new TextBox();
   private TextBox scheduleNameTextBox = new TextBox();
   private static TextBox scheduleLocationTextBox = new TextBox();
   private CheckBox appendTimeChk = new CheckBox();
@@ -128,6 +129,14 @@ public class NewScheduleDialog extends PromptDialogBox {
   private void createUI() {
     addStyleName("schedule-output-location-dialog");
     VerticalFlexPanel content = new VerticalFlexPanel();
+
+    Label scheduleUserNameLabel = new Label( Messages.getString( "userName" ) );
+    scheduleUserNameLabel.setStyleName( ScheduleEditor.SCHEDULE_LABEL );
+    content.add( scheduleUserNameLabel );
+
+    scheduleUserNameTextBox.getElement().setId( "schedule-user-name-input" );
+
+    content.add( scheduleUserNameTextBox );
 
     HorizontalFlexPanel scheduleNameLabelPanel = new HorizontalFlexPanel();
     Label scheduleNameLabel = new Label( Messages.getString( "scheduleNameColon" ) );
@@ -252,6 +261,10 @@ public class NewScheduleDialog extends PromptDialogBox {
     content.add( overrideExistingChk );
 
     if ( jsJob != null ) {
+      if ( !StringUtils.isEmpty( jsJob.getUserName() ) ) {
+        scheduleUserNameTextBox.setText( jsJob.getUserName() );
+      }
+
       scheduleNameTextBox.setText( jsJob.getJobName() );
       scheduleLocationTextBox.setText( jsJob.getOutputPath() );
       String autoCreateUniqueFilename = jsJob.getJobParamValue( "autoCreateUniqueFilename" );
@@ -360,6 +373,24 @@ public class NewScheduleDialog extends PromptDialogBox {
             if ( jsJob != null ) {
               jsJob.setJobName( scheduleNameTextBox.getText() );
               jsJob.setOutputPath( scheduleLocationTextBox.getText(), scheduleNameTextBox.getText() );
+
+              String userName =  scheduleUserNameTextBox.getText();
+              if ( !StringUtils.isEmpty( userName ) ) {
+                userName = userName.trim();
+                if ( !userName.equalsIgnoreCase( jsJob.getUserName() ) ) {
+                  JsJobParam actionUser = jsJob.getJobParam( "ActionAdapterQuartzJob-ActionUser" );
+                  if ( actionUser != null ) {
+                    if ( !userName.equalsIgnoreCase( actionUser.getValue() ) ) {
+                      actionUser.setValue( userName );
+                    }
+                  } else {
+                    JsJobParam jjp = JavaScriptObject.createObject().cast();
+                    jjp.setName( "ActionAdapterQuartzJob-ActionUser" );
+                    jjp.setValue( userName );
+                    jsJob.getJobParams().push( jjp );
+                  }
+                }
+              }
 
               if ( jsJob.getJobParamValue( "appendDateFormat" ) != null ) {
                 if ( dateFormat != null ) {
